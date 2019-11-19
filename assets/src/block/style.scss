@@ -1,0 +1,26 @@
+@import '../common';
+
+.post__list {
+    display:flex;
+}
+.post {
+    background: $gray;
+    box-shadow: 0 30px 60px 0 rgba(90, 116, 148, 0.4);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+.post__byline {
+    text-transform: uppercase;
+}
+
+.post__morelink {
+    background: $light-blue;
+    border-width: 2px;
+    border-style: solid;
+    display: inline-block;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+}
