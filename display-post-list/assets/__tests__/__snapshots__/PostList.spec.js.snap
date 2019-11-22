@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PostList component Matches the snapshot 1`] = `
+<p
+  className="post-list-none"
+>
+  No posts found, please try again.
+</p>
+`;

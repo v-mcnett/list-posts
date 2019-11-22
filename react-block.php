@@ -34,14 +34,14 @@ if(!class_exists('ReactBlock'))
       // Register our block script with WordPress
       wp_register_script(
         'react-block-script',
-        plugins_url('/assets/dist/blocks.build.js', __FILE__),
+        plugins_url('/gutenberg-admin/assets/dist/blocks.build.js', __FILE__),
         array('wp-blocks', 'wp-element', 'wp-editor', 'wp-api', 'wp-api-fetch')
       );
       
       // Register our block's base CSS  
       wp_register_style(
         'react-block-style',
-        plugins_url('/assets/dist/assets.style.build.css', __FILE__),
+        plugins_url('/gutenberg-admin/assets/dist/assets.style.build.css', __FILE__),
         array( 'wp-blocks' )
       );
         
@@ -49,18 +49,11 @@ if(!class_exists('ReactBlock'))
       if( is_admin() ) :
         wp_register_style(
           'react-block-edit-style',
-          plugins_url('/assets/dist/assets.editor.build.css', __FILE__),
+          plugins_url('/gutenberg-admin/assets/dist/assets.editor.build.css', __FILE__),
           array( 'wp-edit-blocks' )
         );
       endif;
         
-     /* // Enqueue the script in the editor
-      register_block_type('react-block/main', array(
-        'editor_script' => (array($this,'react-block-script')),
-        'editor_style' => (array($this,'react-block-edit-style')),
-        'style' => (array($this,'react-block-style')),
-        'render_callback' => (array($this, 'render_posts_block')) 
-      )); */
       // Enqueue the script in the editor
       register_block_type('react-block/main', array(
         'editor_script' => 'react-block-script',
@@ -69,7 +62,7 @@ if(!class_exists('ReactBlock'))
         'render_callback' => (array($this, 'render_posts_block'))  
       ));
 
-      add_filter('gutenberg_post_list_render_filter', 'render_guten_post_list_filter', 10, 2);
+      add_filter('post_list_render_filter', 'render_guten_post_list_filter', 10, 2);
     }
 
     public function react_block_add_author_name_to_api() {
@@ -107,59 +100,41 @@ if(!class_exists('ReactBlock'))
     }
 
     public function render_posts_block($attributes) {
+      
       $selectedPostCount    = isset( $attributes['selectedPostCount'] ) ? $attributes['selectedPostCount'] : 10;
-      $currentPage = isset( $attributes['currentPage'] ) ? $attributes['currentPage'] : 1;
+     /* $currentPage = isset( $attributes['currentPage'] ) ? $attributes['currentPage'] : 1;
 
       $request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
       $request->set_query_params( [ 'per_page' => $selectedPostCount] );
       $response = rest_do_request( $request );
       $server = rest_get_server();
       $data = $server->response_to_data( $response, false );
-      $json = wp_json_encode( $data );
+      $json = wp_json_encode( $data ); */
 
-      return apply_filters( 'gutenberg_post_list_render_filter', $json, '' );
+      return apply_filters( 'post_list_render_filter', array ('selectedPostCount' => $attributes['selectedPostCount']), '' ); 
 
-     // echo '<pre>';
-     // print_r($attributes);
-     // echo '<pre>';
-     // die();
     }
 
   }
 
-  function render_guten_post_list_filter( $json, $title ) {
+  function render_guten_post_list_filter( $attributes, $title ) {
+    $ver = "1.0.0";
+    wp_enqueue_style('display-react-block-css', plugin_dir_url(__FILE__) . 'gutenberg-admin/assets/dist/assets.style.build.css', array(), $ver, 'all' ); 
+    wp_register_script( 'display-react-block-js', plugins_url('display-post-list/assets/dist/blocks.display.js', __FILE__),array(),  $ver, true );
+
+    wp_localize_script( 'display-react-block-js', 'reactObj', $attributes );
+    wp_enqueue_script( 'display-react-block-js' );
     
-    $json = json_decode($json);
-   // if ( ! $query->have_posts() ) {
-   //   return;
-   // }
-
     ob_start();
-
-    foreach( $json as $post ) {//var_dump($post);
-      $id = $post->id;
-      $title = $post->title;
-      $author_name = $post->author_name;
-      $link = $post->link;
-      $featured_image = $post->featured_image;
-      $post_excerpt = $post->excerpt; 
-      $date = $post->date_gmt;
     ?>
-      <article className="post" id=<?php $id; ?>>
-        <h3 className="post__title"><?php $title; ?></h3>
-        <p className="post__byline">Published<?php $date; ?> by <?php $author_name; ?> </p>
-        <figure className="post__figure" style={{ backgroundImage: `url(<?php $featured_image; ?>)` }}>
-        </figure>
-        <div className="post__excerpt"><?php $post_excerpt; ?></div>
-
-        <a href=<?php $link; ?> className="post__morelink">Continue reading</a>
-          
-    </article>
+      <div id ="display-post-list"></div>
     <?php
-    }
 
-    return ob_get_clean();
+    return ob_get_clean(); 
   }
+
+
+    
   
 }
 

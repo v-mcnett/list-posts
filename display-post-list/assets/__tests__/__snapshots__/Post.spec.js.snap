@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Post component Matches the snapshot 1`] = `
+<article
+  className="post"
+>
+  <h3
+    className="post__title"
+  />
+  <p
+    className="post__byline"
+  >
+    Published
+     
+     by 
+    
+     
+  </p>
+  <figure
+    className="post__figure"
+    style={
+      Object {
+        "backgroundImage": "url(false)",
+      }
+    }
+  />
+  <div
+    className="post__excerpt"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": undefined,
+      }
+    }
+  />
+  <a
+    className="post__morelink"
+    href=""
+  >
+    Continue reading
+  </a>
+</article>
+`;
